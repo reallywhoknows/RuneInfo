@@ -2,34 +2,57 @@ import requests
 import discord
 from discord.commands import slash_command
 from discord.ext import commands
+from datetime import date
 
 class commands(commands.Cog):
     def __init__(self,client):
         self.client = client
-        
-    #Used to restrict to specific role
-    #@commands.has_role("Admin")
 
-    @slash_command(guild_ids=[1087515364017066135],name='ping',description='return bot latency')
-    async def price(self,ctx: discord.ApplicationContext,arg):
+    @slash_command(guild_ids=[1087515364017066135],name='price',description='Get the latest buy/sell information for the item of your choice.')
+    async def price(self,ctx: discord.ApplicationContext,item):
         #Add headers, or osrs api will complain. Ref github repo for contact information.
         headers = {
             "User-Agent": "RuneInfo",
             "From": "https://github.com/reallywhoknows/RuneInfo"
         }
 
-        #GET api request, convert into JSON data for usage
+        #GET api request, convert into JSON data for usage.
         with requests.Session() as session:
             request = session.get("https://prices.runescape.wiki/api/v1/osrs/mapping",headers=headers)
         json_data = request.json()
 
+        #Convert json data into usable variables. id, name examine and icon. id is required for pathing to GE information.
         for i in json_data:
-            if i["name"].lower() == arg.lower():
+            if i["name"].lower() == item.lower():
                 item_id = i["id"]
                 item_name = i["name"]
                 item_examine = i["examine"]
 
-        print(f"{item_id},{item_name},{item_examine}")
+        #Some URLs do not like passing integers in the url.
+        item_id = str(item_id)
+
+        #GET api request, converting JSON data for usage.
+        with requests.Session() as session:
+            request = session.get(f"https://prices.runescape.wiki/api/v1/osrs/latest?id={item_id}",headers=headers)
+        json_data = request.json()
+
+        item_high = json_data["data"][item_id]["high"]
+        item_low = json_data["data"][item_id]["low"]
+
+        #Grabs icon from runelite, which logically uses item id to reference image.
+        item_icon = f"https://static.runelite.net/cache/item/icon/{item_id}.png"
+
+        #Build the message with styling for more pleasant presentation
+        embed = discord.Embed(
+            title = item_name,
+            description = f"*{item_examine}*",
+            color = discord.Colour.brand_red(),
+        )
+        embed.add_field(name="",value=f"Buy now price: {item_high:,}\nSell now price: {item_low:,}")
+        embed.set_thumbnail(url = item_icon)
+        embed.set_footer(text=date.today().strftime("%B %d, %Y"))
+
+        await ctx.respond(embed=embed)
 
 def setup(client):
     client.add_cog(commands(client))
