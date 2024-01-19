@@ -15,6 +15,7 @@ with open("token.json") as content:
 
 extensions = [
     "extensions.extension_controller",
+    "extensions.commands",
 ]
 
 for extensions in extensions:
