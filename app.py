@@ -13,12 +13,13 @@ client = commands.Bot(command_prefix=prefix, intents=intents)
 with open("token.json") as content:
     file = json.load(content)
 
-for filename in os.listdir("./extensions"):
-    if filename.endswith(".py"):
-        client.load_extension(f"extensions.{filename[:-3]}")
-        print(Fore.GREEN + f"Extension Loaded: {filename}")
-    else:
-        print(Fore.RED + f"FAILED TO LOAD: {filename}")
+extensions = [
+    "extensions.extension_controller",
+]
+
+for extensions in extensions:
+    client.load_extension(extensions)
+    print(Fore.GREEN + f"Extension Loaded: {extensions}")
 
 @client.event
 async def on_ready():
