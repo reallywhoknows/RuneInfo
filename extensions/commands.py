@@ -19,6 +19,7 @@ class commands(commands.Cog):
 
         with requests.Session() as session:
             request = session.get(f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.json?player={rsn.replace(' ', '%20')}",headers=headers)
+            #Catch if RSN returns 404 (Invalid username)
             if request.status_code == 404:
                 #Build the error message with styling for more pleasant presentation
                 embed = discord.Embed(
@@ -60,7 +61,7 @@ class commands(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(guild_ids=[1087515364017066135],name='price',description='Get the latest buy/sell information for the item of your choice.')
+    @slash_command(name='price',description='Get the latest buy/sell information for the item of your choice.')
     async def price(self,ctx: discord.ApplicationContext,item):
         #Add headers, or osrs api will complain. Ref github repo for contact information.
 
