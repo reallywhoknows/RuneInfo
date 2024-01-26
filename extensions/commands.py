@@ -21,12 +21,34 @@ class commands(commands.Cog):
             request = session.get("https://prices.runescape.wiki/api/v1/osrs/mapping",headers=headers)
         json_data = request.json()
 
-        #Convert json data into usable variables. id, name examine and icon. id is required for pathing to GE information.
+        #Check if request is numbers or text. In order to alowing passing through raw ID
+        if item.isnumeric():
+            item = int(item)
+            key = "id"
+        else:
+            item = item.lower()
+            item = item.capitalize()
+            key = "name"
+
         for i in json_data:
-            if i["name"].lower() == item.lower():
+            if i[key] == item:
+                #Convert json data into usable variables. id, name examine and icon. id is required for pathing to GE information. 
                 item_id = i["id"]
                 item_name = i["name"]
                 item_examine = i["examine"]
+            else:
+                #Build the error message with styling for more pleasant presentation
+                embed = discord.Embed(
+                    title = "Error! Item not found!",
+                    description = f"Please check if `{item}` is a valid item name or id otherwise please report the issue.\nhttps://github.com/reallywhoknows/RuneInfo/issues",
+                    color = discord.Colour.brand_red(),
+                    )
+                file = discord.File("./assets/warning.png")
+                embed.set_thumbnail(url="attachment://warning.png")
+                embed.set_footer(text=date.today().strftime("%B %d, %Y"))
+
+                await ctx.respond(embed=embed, file=file)
+                return
 
         #Some URLs do not like passing integers in the url.
         item_id = str(item_id)
