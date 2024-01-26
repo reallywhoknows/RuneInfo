@@ -13,20 +13,34 @@ headers = {
 class commands(commands.Cog):
     def __init__(self,client):
         self.client = client
-
-    @slash_command(guild_ids=[1087515364017066135],name='lookup',description='Check the stats of any OSRS user!')
+#guild_ids=[1087515364017066135]
+    @slash_command(name='lookup',description='Check the stats of any OSRS user!')
     async def lookup(self,ctx: discord.ApplicationContext,rsn):
 
         with requests.Session() as session:
             request = session.get(f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.json?player={rsn.replace(' ', '%20')}",headers=headers)
+            if request.status_code == 404:
+                #Build the error message with styling for more pleasant presentation
+                embed = discord.Embed(
+                    title = "Error! User could not be found!",
+                    description = f"Please check if `{rsn}` is a valid username otherwise please report the issue.\nhttps://github.com/reallywhoknows/RuneInfo/issues",
+                    color = discord.Colour.brand_red(),
+                    )
+                file = discord.File("./assets/warning.png")
+                embed.set_thumbnail(url="attachment://warning.png")
+                embed.set_footer(text=date.today().strftime("%B %d, %Y"))
+
+                await ctx.respond(embed=embed, file=file)
+                return
+            
         json_data = request.json()
 
-        stats = {}
 
+        #Creating a dict and adding the values from json_data skills into it for use later
+        stats = {}
         for i in json_data['skills']:
             stats[i['name']] = i['level']
         
-        print(stats)
         #Unfortunately due to limitations, this is going to get a bit ugly. We will need to reference a custom emoji to include the icon in an embed.
         #File uploads are restricted 10 per message & URLs don't embed the icon and instead show as hyperlink.
         #If there is a better way to do this please let me know.
