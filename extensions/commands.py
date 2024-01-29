@@ -50,13 +50,13 @@ class commands(commands.Cog):
             icons = json.load(content)
 
         embed = discord.Embed(
-            title = f"**{rsn} {icons['overall']} {stats['Overall']}**",
+            title = f"**{rsn}**",
             description = f"",
             color = discord.Colour.brand_red(),
             )
-        embed.add_field(name="", value=f"{icons['attack']} {stats['Attack']}\n{icons['strength']} {stats['Strength']}\n{icons['defence']} {stats['Defence']}\n{icons['ranged']} {stats['Ranged']}\n{icons['prayer']} {stats['Prayer']}\n{icons['runecraft']} {stats['Runecraft']}\n{icons['construction']} {stats['Construction']}", inline=True)
+        embed.add_field(name="", value=f"{icons['attack']} {stats['Attack']}\n{icons['strength']} {stats['Strength']}\n{icons['defence']} {stats['Defence']}\n{icons['ranged']} {stats['Ranged']}\n{icons['prayer']} {stats['Prayer']}\n{icons['runecraft']} {stats['Runecraft']}\n{icons['magic']} {stats['Magic']}\n{icons['construction']} {stats['Construction']}", inline=True)
         embed.add_field(name="", value=f"{icons['hitpoints']} {stats['Hitpoints']}\n{icons['agility']} {stats['Agility']}\n{icons['herblore']} {stats['Herblore']}\n{icons['thieving']} {stats['Thieving']}\n{icons['crafting']} {stats['Crafting']}\n{icons['fletching']} {stats['Fletching']}\n{icons['slayer']} {stats['Slayer']}\n{icons['hunter']} {stats['Hunter']}", inline=True)
-        embed.add_field(name="", value=f"{icons['mining']} {stats['Mining']}\n{icons['smithing']} {stats['Smithing']}\n{icons['fishing']} {stats['Fishing']}\n{icons['cooking']} {stats['Cooking']}\n{icons['firemaking']} {stats['Firemaking']}\n{icons['woodcutting']} {stats['Woodcutting']}\n{icons['farming']} {stats['Farming']}", inline=True)
+        embed.add_field(name="", value=f"{icons['mining']} {stats['Mining']}\n{icons['smithing']} {stats['Smithing']}\n{icons['fishing']} {stats['Fishing']}\n{icons['cooking']} {stats['Cooking']}\n{icons['firemaking']} {stats['Firemaking']}\n{icons['woodcutting']} {stats['Woodcutting']}\n{icons['farming']} {stats['Farming']}\n{icons['overall']} {stats['Overall']}", inline=True)
         embed.set_footer(text=date.today().strftime("%B %d, %Y"))
 
         await ctx.respond(embed=embed)
